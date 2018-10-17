@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Chatbot</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"> </script>
+
+  <style>
+      .bg{
+         /* The image used */
+        background-image:url("yelp_bg.png");
+    
+        /* Full height */
+        height: 100%; 
+    
+         /* Center and scale the image nicely */
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+   </style>
+  <script>
+    //Function 1:
+    //Get the current date and time 
+    function getDateTime() {
+      var date = new Date();
+      var dt = date.toDateString() + " " + date.toLocaleTimeString();
+      return dt
+    };
+
+    //Function 2:
+    //1.Send the message to the server 
+    //2.Get a response back and display it in the Chat window
+    function Send_Show_Mesg() {
+      var msg = document.getElementById("msgId").value;
+      var textarea = document.getElementById('usr');
+      $.ajax({
+        url: "https://ngsgtsilu2.execute-api.us-east-1.amazonaws.com/v1/chatbot",
+        type: 'POST',
+        headers:
+        {
+         "x-api-key": "n3glH6mF3r5wmL0huzhYe7f1UK0viwR46OogRvdq"
+        },
+        crossDomain: true,
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({ "message": msg }),
+        beforeSend: function () {
+          $("#usr").append(getDateTime() + "\n" + " You: " + msg + "\n");
+        },
+        success: function (data) {
+          console.log("success\n");
+          //$("#usr").append(data);
+          $("#usr").append(getDateTime() + "\n" +" Bot: " + data + "\n");
+          textarea.scrollTop = textarea.scrollHeight;
+          $('#msgId').val(function () {
+            return this.defaultValue;
+          });
+        },
+        error: function (data) {
+          alert(JSON.stringify(data));
+        }
+      });
+    };
+  </script>
+</head>
+
+<body>
+    <div class="bg">
+    <div class="container">
+    <h2 align="center">Welcome, User !</h2>
+    <p></p>
+   
+    <div class="form-group">
+      <label for="usr">History</label>
+      <textarea readonly rows="10" class="form-control" id="usr"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="msgId">Type your Message here :</label>
+      <input type="text" class="form-control" id="msgId">
+      <br>
+      <button style="margin:auto;display: left" id="myBtn" class="btn-primary" onclick="Send_Show_Mesg();">Send</button>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+
+  </div>
+</div>
+</body>
+
+</html>
